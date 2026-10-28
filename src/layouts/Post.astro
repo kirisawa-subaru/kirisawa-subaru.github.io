@@ -2,7 +2,7 @@
 import type { MarkdownHeading } from 'astro';
 import Base from './Base.astro';
 import TagList from '../components/TagList.astro';
-import { accentOf, formatDate, postUrl, readingMinutes, type Post } from '../lib/posts';
+import { formatDate, postUrl, readingMinutes, type Post } from '../lib/posts';
 
 interface Props {
   post: Post;
@@ -15,82 +15,128 @@ interface Props {
 const { post, headings, prev, next, preview = false } = Astro.props;
 const { title, description, date, updated, tags, draft, cover } = post.data;
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const hasToc = toc.length > 1;
 ---
 
-<Base title={title} description={description} noindex={preview}>
+<Base title={title} description={description} noindex={preview} nav="writing">
   {preview && (
     <div class="preview-bar" role="status">
       <span class="pill pill--draft">Preview</span>
       <span>草稿预览，未发布，不出现在列表、RSS 和搜索引擎里。</span>
     </div>
   )}
-  <article class="post" data-accent={accentOf(post)}>
-    <header class="post-head shell">
-      <div class="post-meta">
-        <time class="meta" datetime={date.toISOString()}>{formatDate(date)}</time>
-        <span class="meta">· {readingMinutes(post.body)} min read</span>
-        {updated && <span class="meta">· updated {formatDate(updated)}</span>}
-        {draft && <span class="pill pill--draft">Draft</span>}
-      </div>
-      <h1 class="display">{title}</h1>
-      {description && <p class="lede">{description}</p>}
-      <TagList tags={tags} />
-    </header>
+  <article class:list={['post shell', { 'has-toc': hasToc }]}>
+    <div class="post-main">
+      <header class="post-head">
+        <div class="post-meta">
+          <time class="meta" datetime={date.toISOString()}>{formatDate(date)}</time>
+          <span class="meta">· 约 {readingMinutes(post.body)} 分钟</span>
+          {updated && <span class="meta">· 更新于 {formatDate(updated)}</span>}
+          {draft && <span class="pill pill--draft">Draft</span>}
+        </div>
+        <h1 class="post-title">{title}</h1>
+        {description && <p class="lede">{description}</p>}
+        <TagList tags={tags} />
+      </header>
 
-    {cover && (
-      <div class="shell cover">
-        <img src={cover.src} width={cover.width} height={cover.height} alt="" />
-      </div>
-    )}
+      {hasToc && (
+        <details class="toc toc--inline">
+          <summary>目录</summary>
+          <ol>
+            {toc.map((h) => (
+              <li class={`d${h.depth}`}><a href={`#${h.slug}`} data-toc={h.slug}>{h.text}</a></li>
+            ))}
+          </ol>
+        </details>
+      )}
 
-    <div class="shell post-body">
+      {cover && (
+        <div class="cover">
+          <img src={cover.src} width={cover.width} height={cover.height} alt="" />
+        </div>
+      )}
+
       <div class="prose">
         <slot />
       </div>
-      {toc.length > 1 && (
-        <aside class="toc" aria-label="Contents">
-          <p class="kicker">Contents</p>
-          <ol>
-            {toc.map((h) => (
-              <li class={`d${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>
-            ))}
-          </ol>
-        </aside>
+
+      <footer class="post-foot">
+        <TagList tags={tags} />
+        <a class="back" href="/">← 全部文章</a>
+      </footer>
+
+      {(prev || next) && (
+        <nav class:list={['pager', { 'pager--single': !(prev && next) }]} aria-label="More posts">
+          {next && (
+            <a class="pager-card" href={postUrl(next)}>
+              <span class="kicker">← 较新</span>
+              <span class="pager-title">{next.data.title}</span>
+            </a>
+          )}
+          {prev && (
+            <a class="pager-card pager-card--older" href={postUrl(prev)}>
+              <span class="kicker">较早 →</span>
+              <span class="pager-title">{prev.data.title}</span>
+            </a>
+          )}
+        </nav>
       )}
     </div>
 
-    <nav class="shell pager" aria-label="More posts">
-      {next ? (
-        <a class="pager-card" href={postUrl(next)}>
-          <span class="kicker">← Newer</span>
-          <span class="pager-title">{next.data.title}</span>
-        </a>
-      ) : <span />}
-      {prev && (
-        <a class="pager-card pager-card--right" href={postUrl(prev)}>
-          <span class="kicker">Older →</span>
-          <span class="pager-title">{prev.data.title}</span>
-        </a>
-      )}
-    </nav>
+    {hasToc && (
+      <aside class="toc toc--side" aria-label="目录">
+        <div class="toc-sticky">
+          <p class="kicker">Contents</p>
+          <ol>
+            {toc.map((h) => (
+              <li class={`d${h.depth}`}><a href={`#${h.slug}`} data-toc={h.slug}>{h.text}</a></li>
+            ))}
+          </ol>
+        </div>
+      </aside>
+    )}
   </article>
 </Base>
 
 <script>
-  // Display equations wider than the text column break out to the full article
-  // width; ones still too wide scroll horizontally with a fade on the right.
-  const body = document.querySelector<HTMLElement>('.post-body');
-  const prose = body?.querySelector<HTMLElement>('.prose');
+  const article = document.querySelector<HTMLElement>('article.post');
+  const prose = article?.querySelector<HTMLElement>('.prose');
+  const sideToc = article?.querySelector<HTMLElement>('.toc--side');
+
+  // ---- display math: shrink slightly to fit, else break out, else scroll ----
+  const MIN_SCALE = 0.82;
+
+  function updateFade(el: HTMLElement) {
+    const max = el.scrollWidth - el.clientWidth;
+    el.classList.toggle('fade-left', el.scrollLeft > 2);
+    el.classList.toggle('fade-right', el.scrollLeft < max - 2);
+  }
 
   function fitMath() {
-    if (!body || !prose) return;
-    const wide = body.clientWidth;
+    if (!article || !prose) return;
+    const sideVisible = !!sideToc && getComputedStyle(sideToc).display !== 'none';
+    // Break out to the full article width only when no side TOC occupies it.
+    const wide = sideVisible ? prose.clientWidth : article.clientWidth;
     prose.style.setProperty('--wide', `${wide}px`);
     for (const el of prose.querySelectorAll<HTMLElement>('.katex-display')) {
-      el.classList.remove('is-wide', 'is-scrolling', 'at-end');
-      const need = el.scrollWidth;
-      if (need > el.clientWidth + 1 && wide > prose.clientWidth) el.classList.add('is-wide');
-      if (el.scrollWidth > el.clientWidth + 1) el.classList.add('is-scrolling');
+      el.classList.remove('is-wide', 'is-scrolling', 'fade-left', 'fade-right');
+      el.style.removeProperty('font-size');
+      el.removeAttribute('tabindex');
+      el.removeAttribute('role');
+      el.removeAttribute('aria-label');
+      if (el.scrollWidth <= el.clientWidth + 1) continue;
+      if (wide > prose.clientWidth + 1) el.classList.add('is-wide');
+      const ratio = el.clientWidth / el.scrollWidth;
+      if (ratio >= 1) continue;
+      if (ratio >= MIN_SCALE) {
+        el.style.fontSize = `${Math.floor(ratio * 1000) / 10}%`;
+        if (el.scrollWidth <= el.clientWidth + 1) continue;
+      }
+      el.classList.add('is-scrolling');
+      el.tabIndex = 0;
+      el.setAttribute('role', 'region');
+      el.setAttribute('aria-label', '公式，可横向滚动');
+      updateFade(el);
     }
   }
 
@@ -98,15 +144,54 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
     'scroll',
     (e) => {
       const el = e.target as HTMLElement;
-      if (!el.classList?.contains('is-scrolling')) return;
-      el.classList.toggle('at-end', el.scrollLeft + el.clientWidth >= el.scrollWidth - 2);
+      if (el.classList?.contains('is-scrolling')) updateFade(el);
     },
     { capture: true, passive: true },
   );
 
   fitMath();
   document.fonts?.ready.then(fitMath);
-  if (body) new ResizeObserver(fitMath).observe(body);
+  if (article) new ResizeObserver(fitMath).observe(article);
+
+  // ---- table of contents: highlight the section under the reading line ----
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc]')];
+  const ids = [...new Set(links.map((a) => a.dataset.toc!))];
+  const heads = ids.map((id) => document.getElementById(id)).filter((h): h is HTMLElement => !!h);
+
+  function spy() {
+    const line = 120;
+    let current: string | null = null;
+    for (const h of heads) {
+      if (h.getBoundingClientRect().top <= line) current = h.id;
+      else break;
+    }
+    for (const a of links) {
+      if (a.dataset.toc === current) a.setAttribute('aria-current', 'true');
+      else a.removeAttribute('aria-current');
+    }
+  }
+
+  if (heads.length) {
+    let ticking = false;
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          spy();
+          ticking = false;
+        });
+      },
+      { passive: true },
+    );
+    spy();
+  }
+
+  // Close the inline TOC after picking a section.
+  document.querySelector('.toc--inline')?.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('a')) (e.currentTarget as HTMLDetailsElement).open = false;
+  });
 </script>
 
 <style>
@@ -124,22 +209,26 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
     font-weight: 650;
   }
 
-  .post-head {
-    position: relative;
-    padding: 56px 0 40px;
-    max-width: 900px;
-    margin-inline: auto;
+  /* Text column on the left edge of the shell (same edge as index pages),
+     side TOC aligned to the header's right edge. */
+  .post {
+    display: grid;
+    grid-template-columns: minmax(0, var(--measure));
+    justify-content: start;
   }
 
-  .post-head::before {
-    position: absolute;
-    top: 40px;
-    left: -28px;
-    width: 10px;
-    height: 10px;
-    background: var(--dot);
-    border-radius: 50%;
-    content: '';
+  .post.has-toc {
+    grid-template-columns: minmax(0, var(--measure)) minmax(180px, 220px);
+    justify-content: space-between;
+    column-gap: 48px;
+  }
+
+  .post-main {
+    min-width: 0;
+  }
+
+  .post-head {
+    padding: 56px 0 36px;
   }
 
   .post-meta {
@@ -149,23 +238,27 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
     gap: 8px;
   }
 
-  h1 {
-    margin: 18px 0 0;
-    font-size: clamp(38px, 5.6vw, 68px);
-    letter-spacing: -0.05em;
+  .post-title {
+    margin: 16px 0 0;
+    font-size: clamp(32px, 4.4vw, 52px);
+    font-weight: 750;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+
+  .post-head > :global(.tags) {
+    margin-top: 18px;
   }
 
   .lede {
-    max-width: 680px;
-    margin: 20px 0 24px;
+    margin: 18px 0 22px;
     color: var(--ink-soft);
     font-size: 19px;
     line-height: 1.6;
   }
 
   .cover {
-    max-width: 900px;
-    margin: 0 auto 48px;
+    margin: 0 0 48px;
   }
 
   .cover img {
@@ -174,31 +267,9 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
     box-shadow: var(--shadow-sm);
   }
 
-  .post-body {
-    max-width: 900px;
-    margin-inline: auto;
-    position: relative;
-  }
-
-  .toc {
-    position: absolute;
-    top: 0;
-    left: calc(100% + 40px);
-    width: 200px;
-    height: 100%;
-  }
-
-  .toc > * {
-    position: sticky;
-    top: 104px;
-  }
-
-  .toc .kicker {
-    margin-bottom: 10px;
-  }
+  /* ---- TOC ---- */
 
   .toc ol {
-    top: 132px;
     margin: 0;
     padding: 0 0 0 14px;
     border-left: 1px solid var(--line);
@@ -216,32 +287,163 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
   }
 
   .toc a {
+    position: relative;
+    display: block;
     color: var(--ink-soft);
     text-decoration: none;
+    transition: color 140ms ease;
   }
 
   .toc a:hover {
-    color: var(--blue);
+    color: var(--ink);
   }
 
-  @media (max-width: 1360px) {
-    .toc {
+  .toc a[aria-current='true'] {
+    color: var(--blue);
+    font-weight: 700;
+  }
+
+  .toc a[aria-current='true']::before {
+    position: absolute;
+    top: 0.15em;
+    bottom: 0.15em;
+    left: -15px;
+    width: 2px;
+    background: var(--blue);
+    border-radius: 2px;
+    content: '';
+  }
+
+  .toc li.d3 a[aria-current='true']::before {
+    left: -27px;
+  }
+
+  .toc--side {
+    padding-top: 56px;
+  }
+
+  .toc-sticky {
+    position: sticky;
+    top: 104px;
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+  }
+
+  .toc-sticky .kicker {
+    margin-bottom: 10px;
+  }
+
+  .toc--inline {
+    margin: 0 0 32px;
+    padding: 12px 18px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+  }
+
+  .toc--inline summary {
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+    color: var(--ink-soft);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .toc--inline summary {
+    gap: 8px;
+    list-style: none;
+  }
+
+  .toc--inline summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .toc--inline summary::before {
+    color: var(--ink-faint);
+    font-size: 11px;
+    content: '▶';
+    transition: transform 160ms ease;
+  }
+
+  .toc--inline[open] summary::before {
+    transform: rotate(90deg);
+  }
+
+  .toc--inline[open] summary {
+    margin-bottom: 8px;
+  }
+
+  .toc--inline ol {
+    font-size: 14px;
+  }
+
+  .toc--inline li {
+    padding: 6px 0;
+  }
+
+  .toc--inline {
+    display: none;
+  }
+
+  @media (max-width: 1100px) {
+    .post.has-toc {
+      grid-template-columns: minmax(0, var(--measure));
+      justify-content: start;
+    }
+
+    .toc--side {
       display: none;
+    }
+
+    .toc--inline {
+      display: block;
     }
   }
 
+  /* ---- end of article ---- */
+
+  .post-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+
+  .back {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    color: var(--ink-soft);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .back:hover {
+    color: var(--blue);
+  }
+
   .pager {
-    max-width: 900px;
-    margin: 80px auto 0;
+    margin-top: 28px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
   }
 
+  .pager--single {
+    grid-template-columns: 1fr;
+  }
+
   .pager-card {
     display: grid;
     gap: 2px;
-    padding: 20px 24px;
+    padding: 18px 22px;
     background: rgba(255, 255, 255, 0.55);
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
@@ -258,30 +460,28 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
     margin: 0;
   }
 
-  .pager-card--right {
-    grid-column: 2;
+  .pager-card--older {
     text-align: right;
   }
 
+  .pager:not(.pager--single) .pager-card--older:only-child {
+    grid-column: 2;
+  }
+
   .pager-title {
-    font-family: var(--font-display);
-    font-size: 19px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.35;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.4;
   }
 
   @media (max-width: 640px) {
-    .post-head::before {
-      display: none;
-    }
-
     .pager {
       grid-template-columns: 1fr;
     }
 
-    .pager-card--right {
-      grid-column: auto;
+    .post-head {
+      padding-top: 36px;
     }
   }
 </style>

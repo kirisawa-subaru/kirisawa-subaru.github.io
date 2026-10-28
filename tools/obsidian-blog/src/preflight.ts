@@ -12,7 +12,6 @@ export interface Issue {
   excerpt?: string;
 }
 
-const ACCENTS = ['blue', 'coral', 'green', 'violet', 'yellow'];
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 // Obsidian's built-in callout types plus the math ones the site adds (astro.config.mjs).
 const CALLOUTS = new Set(
@@ -53,8 +52,6 @@ export function preflight(input: PreflightInput): Issue[] {
     }
     if (fm.draft !== undefined && fm.draft !== null && typeof fm.draft !== 'boolean')
       err('draft 只能是 true 或 false。');
-    if (fm.accent !== undefined && fm.accent !== null && !ACCENTS.includes(String(fm.accent)))
-      err(`accent 只能是 ${ACCENTS.join(' / ')}。`);
     if (fm.description !== undefined && fm.description !== null && typeof fm.description !== 'string')
       err('description 要是一段文字。');
 

@@ -49,7 +49,7 @@ const items = [
   }
 
   .site-header.is-scrolled {
-    background: rgba(245, 242, 235, 0.86);
+    background: rgba(245, 242, 235, 0.95);
     border-color: var(--line);
     box-shadow: 0 8px 32px rgba(27, 31, 42, 0.06);
     -webkit-backdrop-filter: blur(18px);
@@ -94,6 +94,9 @@ const items = [
 
   .links a {
     position: relative;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
     color: #2f3439;
     font-size: 14px;
     font-weight: 650;
@@ -103,7 +106,7 @@ const items = [
   .links a:not(.rss)::after {
     position: absolute;
     right: 0;
-    bottom: -7px;
+    bottom: 6px;
     left: 0;
     height: 2px;
     background: var(--coral);
@@ -121,10 +124,11 @@ const items = [
   }
 
   .rss {
-    display: grid;
+    display: grid !important;
     place-items: center;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    min-height: 36px !important;
+    height: 36px;
     border: 1px solid var(--line);
     border-radius: 50%;
     color: var(--ink-soft) !important;

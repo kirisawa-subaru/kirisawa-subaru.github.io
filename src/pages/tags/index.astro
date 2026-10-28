@@ -1,7 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getPosts, getTags, tagSlug } from '../../lib/posts';
-import { ACCENTS } from '../../site.config';
 
 const tags = await getTags(await getPosts());
 ---
@@ -11,8 +10,8 @@ const tags = await getTags(await getPosts());
     <p class="kicker">Index</p>
     <h1 class="display">Tags</h1>
     <ul class="cloud">
-      {tags.map(([tag, n], i) => (
-        <li data-accent={ACCENTS[i % ACCENTS.length]}>
+      {tags.map(([tag, n]) => (
+        <li>
           <a href={`/tags/${tagSlug(tag)}/`}>{tag}<span>{n}</span></a>
         </li>
       ))}
@@ -43,7 +42,8 @@ const tags = await getTags(await getPosts());
     align-items: center;
     gap: 10px;
     padding: 10px 18px;
-    background: var(--tint);
+    color: var(--blue-dark);
+    background: rgba(49, 89, 217, 0.1);
     border-radius: 999px;
     font-weight: 700;
     text-decoration: none;
@@ -51,7 +51,7 @@ const tags = await getTags(await getPosts());
   }
 
   .cloud a:hover {
-    transform: translateY(-2px);
+    background: rgba(49, 89, 217, 0.18);
   }
 
   .cloud span {

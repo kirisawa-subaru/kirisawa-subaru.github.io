@@ -1,11 +1,12 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import { unified } from '@astrojs/markdown-remark';
+import { rehypeHeadingIds, unified } from '@astrojs/markdown-remark';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import remarkMath from 'remark-math-extended';
 import rehypeKatex from 'rehype-katex';
 import rehypeCallouts from 'rehype-callouts';
+import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import remarkTexDisplay from './src/lib/markdown/remark-tex-display.mjs';
 import rehypeMathNoBreak from './src/lib/markdown/rehype-math-nobreak.mjs';
 
@@ -40,6 +41,17 @@ export default defineConfig({
           },
         ],
         rehypeMathNoBreak,
+        // Ids first (Astro would add them after user plugins), then a "#"
+        // anchor after each heading, visible on hover (styled in global.css).
+        rehypeHeadingIds,
+        [
+          rehypeAutolinkHeadings,
+          {
+            behavior: 'append',
+            properties: { className: ['heading-anchor'], ariaLabel: '本节链接' },
+            content: { type: 'text', value: '#' },
+          },
+        ],
       ],
     }),
     shikiConfig: { theme: 'github-light' },

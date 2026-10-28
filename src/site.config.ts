@@ -13,7 +13,3 @@ export const SITE = {
     email: 'hongmyc482@gmail.com',
   },
 };
-
-// Card tints cycle through these when a post has no explicit `accent`.
-export const ACCENTS = ['blue', 'coral', 'green', 'violet', 'yellow'] as const;
-export type Accent = (typeof ACCENTS)[number];

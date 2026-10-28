@@ -26,7 +26,6 @@ date: 2026-10-29         # required
 updated: 2026-11-02      # optional
 tags: [rl, notes]        # optional
 draft: true              # optional; drafts show in `astro dev`, never in production or RSS
-accent: blue             # optional; blue | coral | green | violet | yellow card tint
 cover: ./cover.png       # optional; relative image path
 ```
 
@@ -45,10 +44,14 @@ integration with `npx astro add <name>` and hydrate with `client:visible`.
 
 ## Visual language
 
-Warm paper background, ink text, one blue accent, pastel tints
-(`--tint-*`) for cards, serif display type with tight negative tracking,
-small uppercase blue kickers, pill-shaped labels. Home page = compact intro,
-latest post as a featured card, then the archive grouped by year. CV lives at
+Warm paper background, ink text, one blue accent, serif display type with
+tight negative tracking for site-level headings (wordmark, section and index
+titles), sans for post titles so CJK and Latin titles match, small uppercase
+blue kickers, pill-shaped labels. Colour carries no per-post meaning: index
+rows share one neutral hover, all tag pills are blue; pastel tints
+(`--tint-*`) are reserved for callouts and widgets. Home page = compact
+intro, then every post in one list grouped by year (newest row slightly
+larger, "Latest"). CV lives at
 the end of the About page, never on the home page. Tokens and shared atoms
 are in `src/styles/global.css`; site identity strings in `src/site.config.ts`.
 

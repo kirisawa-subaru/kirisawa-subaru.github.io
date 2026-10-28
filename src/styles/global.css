@@ -34,7 +34,9 @@
     'Noto Sans CJK SC', 'Microsoft YaHei', Arial, sans-serif;
   --font-display: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Georgia, 'Songti SC',
     'Noto Serif CJK SC', 'Source Han Serif SC', serif;
-  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+  /* Latin mono faces first so CJK fonts only supply the CJK glyphs. */
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'DejaVu Sans Mono', 'Liberation Mono',
+    'Noto Sans Mono', 'PingFang SC', 'Noto Sans CJK SC', 'Microsoft YaHei', monospace;
 }
 
 *,
@@ -163,6 +165,13 @@ a.pill:hover {
   background: rgba(49, 89, 217, 0.18);
 }
 
+@media (pointer: coarse) {
+  .pill {
+    min-height: 32px;
+    padding: 4px 13px;
+  }
+}
+
 .pill--draft {
   color: #7a4f00;
   background: rgba(255, 214, 107, 0.4);
@@ -226,7 +235,8 @@ a.pill:hover {
   line-height: 1;
 }
 
-/* Pastel tints shared by cards and accents. */
+/* Pastel tints. Colour is not a per-post signal on index pages (one neutral
+   hover everywhere); tints are reserved for callouts and widgets. */
 [data-accent='blue'] { --tint: var(--tint-blue); --dot: var(--blue); }
 [data-accent='coral'] { --tint: var(--tint-coral); --dot: var(--coral); }
 [data-accent='green'] { --tint: var(--tint-green); --dot: #7fae47; }
@@ -271,6 +281,26 @@ a.pill:hover {
 .prose h2 { font-size: 1.5em; }
 .prose h3 { font-size: 1.22em; }
 .prose h4 { font-size: 1.05em; }
+
+.prose .heading-anchor {
+  margin-left: 0.35em;
+  color: var(--ink-faint);
+  font-weight: 500;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+.prose :is(h2, h3, h4):hover .heading-anchor,
+.prose .heading-anchor:focus-visible {
+  opacity: 1;
+}
+
+@media (pointer: coarse) {
+  .prose .heading-anchor {
+    display: none;
+  }
+}
 
 .prose h2 + *,
 .prose h3 + *,
@@ -340,8 +370,8 @@ a.pill:hover {
   background: var(--paper-bright) !important;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  font-size: 14.5px;
-  line-height: 1.65;
+  font-size: 15px;
+  line-height: 1.7;
 }
 
 /* Untagged fences are usually prose (prompts, transcripts): wrap them. */
@@ -481,19 +511,33 @@ a.pill:hover {
   font-size: 1.12em;
 }
 
-/* Wider than the text column: break out to the full article width (set by
-   Post.astro). Still scrolls if even that is not enough, with a fade edge. */
+/* Layout of wide equations is decided in Post.astro: shrink a little to fit,
+   else break out to the article width (no side TOC), else scroll. Fades show
+   only on the side where content is hidden. */
 .prose .katex-display.is-wide {
   width: var(--wide, 100%);
   max-width: none;
 }
 
 .prose .katex-display.is-scrolling {
-  -webkit-mask-image: linear-gradient(to right, black calc(100% - 40px), transparent);
-  mask-image: linear-gradient(to right, black calc(100% - 40px), transparent);
+  --fade-l: black;
+  --fade-r: black;
+  -webkit-mask-image: linear-gradient(to right, var(--fade-l), black 36px, black calc(100% - 36px), var(--fade-r));
+  mask-image: linear-gradient(to right, var(--fade-l), black 36px, black calc(100% - 36px), var(--fade-r));
+  border-radius: 6px;
 }
 
-.prose .katex-display.is-scrolling.at-end {
+.prose .katex-display.fade-left {
+  --fade-l: transparent;
+}
+
+.prose .katex-display.fade-right {
+  --fade-r: transparent;
+}
+
+.prose .katex-display.is-scrolling:focus-visible {
+  outline: 2px solid rgba(49, 89, 217, 0.45);
+  outline-offset: -2px;
   -webkit-mask-image: none;
   mask-image: none;
 }
@@ -502,14 +546,30 @@ a.pill:hover {
   white-space: nowrap;
 }
 
+/* \boxed: thin ink frame, kept distinct from selection/focus blue. KaTeX
+   paints the frame on top of the formula, so any fill must stay near-transparent. */
 .prose .katex .fbox {
-  border-color: rgba(49, 89, 217, 0.45);
-  border-radius: 0.3em;
-  background: rgba(49, 89, 217, 0.045);
+  border-color: rgba(23, 26, 29, 0.42);
+  border-radius: 0.25em;
+  background: rgba(23, 26, 29, 0.025);
 }
 
 .prose .katex .tag {
   color: var(--ink-faint);
+}
+
+/* Narrow screens: equation numbers go on their own line, right-aligned. */
+@media (max-width: 560px) {
+  .prose .katex-display > .katex > .katex-html > .tag {
+    position: static;
+    display: block;
+    margin-top: 0.15em;
+    text-align: right;
+  }
+
+  .prose .katex-display > .katex > .katex-html > .tag > .strut {
+    display: none;
+  }
 }
 
 .prose .katex-error {

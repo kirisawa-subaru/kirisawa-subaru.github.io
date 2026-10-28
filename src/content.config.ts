@@ -15,7 +15,6 @@ const posts = defineCollection({
       updated: z.coerce.date().optional(),
       tags: z.array(z.string()).default([]),
       draft: z.boolean().default(false),
-      accent: z.enum(['blue', 'coral', 'green', 'violet', 'yellow']).optional(),
       cover: image().optional(),
     }),
 });

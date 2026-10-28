@@ -1,5 +1,4 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { ACCENTS, type Accent } from '../site.config';
 
 export type Post = CollectionEntry<'posts'>;
 
@@ -24,10 +23,6 @@ export function previewUrl(post: Post) {
 
 export function postUrl(post: Post) {
   return `/posts/${post.id}/`;
-}
-
-export function accentOf(post: Post, index = 0): Accent {
-  return post.data.accent ?? ACCENTS[index % ACCENTS.length];
 }
 
 export function formatDate(date: Date) {
