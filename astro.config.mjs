@@ -5,6 +5,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import remarkMath from 'remark-math-extended';
 import remarkBreaks from 'remark-breaks';
+import remarkCodeLang from './src/lib/markdown/remark-code-lang.mjs';
 import rehypeKatex from 'rehype-katex';
 import rehypeCallouts from 'rehype-callouts';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
@@ -21,7 +22,7 @@ export default defineConfig({
     processor: unified({
       // remark-breaks: a single newline is a line break, as in Obsidian's
       // default reading view (posts are written there).
-      remarkPlugins: [remarkMath, remarkTexDisplay, remarkBreaks],
+      remarkPlugins: [remarkMath, remarkTexDisplay, remarkBreaks, remarkCodeLang],
       rehypePlugins: [
         // Obsidian callouts (> [!note]); styled in global.css, not the package theme.
         [
