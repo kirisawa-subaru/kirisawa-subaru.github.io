@@ -4,11 +4,13 @@ import { rehypeHeadingIds, unified } from '@astrojs/markdown-remark';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import remarkMath from 'remark-math-extended';
+import remarkBreaks from 'remark-breaks';
 import rehypeKatex from 'rehype-katex';
 import rehypeCallouts from 'rehype-callouts';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import remarkTexDisplay from './src/lib/markdown/remark-tex-display.mjs';
 import rehypeMathNoBreak from './src/lib/markdown/rehype-math-nobreak.mjs';
+import rehypeQuoteHeadings from './src/lib/markdown/rehype-quote-headings.mjs';
 
 export default defineConfig({
   site: 'https://kirisawa-subaru.github.io',
@@ -17,7 +19,9 @@ export default defineConfig({
     // unified (remark/rehype) rather than the default Sätteri processor, so the
     // remark ecosystem (math now, Obsidian syntax later) plugs in directly.
     processor: unified({
-      remarkPlugins: [remarkMath, remarkTexDisplay],
+      // remark-breaks: a single newline is a line break, as in Obsidian's
+      // default reading view (posts are written there).
+      remarkPlugins: [remarkMath, remarkTexDisplay, remarkBreaks],
       rehypePlugins: [
         // Obsidian callouts (> [!note]); styled in global.css, not the package theme.
         [
@@ -43,6 +47,7 @@ export default defineConfig({
         rehypeMathNoBreak,
         // Ids first (Astro would add them after user plugins), then a "#"
         // anchor after each heading, visible on hover (styled in global.css).
+        rehypeQuoteHeadings,
         rehypeHeadingIds,
         [
           rehypeAutolinkHeadings,

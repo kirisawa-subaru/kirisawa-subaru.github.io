@@ -76,6 +76,10 @@ pull before working.
   `astro.config.mjs` under `markdown.processor: unified({...})`, not the
   deprecated top-level `markdown.remarkPlugins`.
 - Zod comes from `astro/zod`; loaders from `astro/loaders`.
+- Rendering follows Obsidian's defaults because posts are written there:
+  single newlines are line breaks (`remark-breaks`), headings inside
+  blockquotes are quoted text and stay out of the TOC (`rehype-quote-headings`),
+  callouts render (`rehype-callouts`).
 
 ## Math (high priority — posts are formula-heavy)
 

@@ -25,6 +25,7 @@
     "rehype-autolink-headings": "^7.1.0",
     "rehype-callouts": "^2.2.0",
     "rehype-katex": "^7.0.1",
+    "remark-breaks": "^4.0.0",
     "remark-math-extended": "^6.1.1",
     "unist-util-visit": "^5.2.0"
   },

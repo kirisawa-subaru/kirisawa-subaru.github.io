@@ -355,6 +355,12 @@ a.pill:hover {
 
 .prose blockquote > :first-child { margin-top: 0; }
 
+.prose blockquote .quote-heading {
+  margin-top: 1.4em;
+  color: var(--ink);
+  font-weight: 750;
+}
+
 .prose hr {
   height: 1px;
   margin: 2.6em 0;
