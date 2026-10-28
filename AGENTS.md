@@ -5,8 +5,8 @@ by `.github/workflows/deploy.yml` on every push to `main`.
 
 ## Ownership boundary
 
-- **Raymond owns post bodies.** Files under `src/content/posts/` and the prose in
-  `src/pages/about.md` are his writing. Do not rewrite, reword, "polish" or
+- **Raymond owns post bodies.** Files under `src/content/posts/` and
+  `src/content/about.md` are his writing. Do not rewrite, reword, "polish" or
   translate them. Allowed edits there: fixing frontmatter that fails the schema,
   fixing broken links/image paths, and changes he explicitly asks for.
 - **Agents own everything else**: layouts, components, styles, config, CI,
@@ -20,6 +20,7 @@ the URL `/posts/<slug>/`. Schema lives in `src/content.config.ts`:
 
 ```yaml
 title: string            # required
+slug: eth-ladder         # optional; URL /posts/<slug>/
 description: string      # optional, shown in lists and meta
 date: 2026-10-29         # required
 updated: 2026-11-02      # optional
@@ -29,7 +30,9 @@ accent: blue             # optional; blue | coral | green | violet | yellow card
 cover: ./cover.png       # optional; relative image path
 ```
 
-The repo is public, so drafts are readable on GitHub even though they are not built.
+`slug` (optional, `a-z0-9-`) sets the URL; filenames may then be Chinese titles.
+Drafts are left out of lists/RSS/sitemap but get an unlisted noindex preview at
+`/preview/<slug>/`. The repo is public, so drafts are readable on GitHub anyway.
 Private local-only posts go in `src/content/posts/local/` (gitignored): they render
 in dev/preview on this machine and never reach GitHub.
 
@@ -48,6 +51,14 @@ small uppercase blue kickers, pill-shaped labels. Home page = compact intro,
 latest post as a featured card, then the archive grouped by year. CV lives at
 the end of the About page, never on the home page. Tokens and shared atoms
 are in `src/styles/global.css`; site identity strings in `src/site.config.ts`.
+
+## Obsidian
+
+On the Mac, `src/content/` of a clone at `/Users/raymond/Documents/kirisawa-blog`
+is opened as an Obsidian vault (its `.obsidian/` is gitignored). Raymond writes
+and publishes from there with the companion plugin in `tools/obsidian-blog/`, which
+commits and pushes with his own git identity. Expect his pushes to `main`;
+pull before working.
 
 ## Toolchain notes (non-obvious)
 

@@ -1,0 +1,17 @@
+---
+import { render } from 'astro:content';
+import PostLayout from '../../layouts/Post.astro';
+import { getDrafts } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const drafts = await getDrafts();
+  return drafts.map((post) => ({ params: { id: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+---
+
+<PostLayout post={post} headings={headings} preview>
+  <Content />
+</PostLayout>

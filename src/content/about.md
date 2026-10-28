@@ -1,8 +1,6 @@
 ---
-layout: ../layouts/Page.astro
 title: About
 kicker: Who writes here
-nav: about
 description: About Kirisawa Subaru.
 ---
 

@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /preview/
+
+Sitemap: https://kirisawa-subaru.github.io/sitemap-index.xml

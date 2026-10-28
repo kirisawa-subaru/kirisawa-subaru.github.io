@@ -10,7 +10,7 @@ import rehypeMathNoBreak from './src/lib/markdown/rehype-math-nobreak.mjs';
 
 export default defineConfig({
   site: 'https://kirisawa-subaru.github.io',
-  integrations: [mdx(), sitemap()],
+  integrations: [mdx(), sitemap({ filter: (page) => !page.includes('/preview/') })],
   markdown: {
     // unified (remark/rehype) rather than the default Sätteri processor, so the
     // remark ecosystem (math now, Obsidian syntax later) plugs in directly.

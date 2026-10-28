@@ -9,14 +9,21 @@ interface Props {
   headings: MarkdownHeading[];
   prev?: Post;
   next?: Post;
+  preview?: boolean;
 }
 
-const { post, headings, prev, next } = Astro.props;
+const { post, headings, prev, next, preview = false } = Astro.props;
 const { title, description, date, updated, tags, draft, cover } = post.data;
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
-<Base title={title} description={description}>
+<Base title={title} description={description} noindex={preview}>
+  {preview && (
+    <div class="preview-bar" role="status">
+      <span class="pill pill--draft">Preview</span>
+      <span>草稿预览，未发布，不出现在列表、RSS 和搜索引擎里。</span>
+    </div>
+  )}
   <article class="post" data-accent={accentOf(post)}>
     <header class="post-head shell">
       <div class="post-meta">
@@ -103,6 +110,20 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 </script>
 
 <style>
+  .preview-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 24px;
+    color: #7a4f00;
+    background: rgba(255, 214, 107, 0.28);
+    border-bottom: 1px solid rgba(224, 168, 18, 0.3);
+    font-size: 13px;
+    font-weight: 650;
+  }
+
   .post-head {
     position: relative;
     padding: 56px 0 40px;

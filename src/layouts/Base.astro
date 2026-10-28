@@ -9,9 +9,10 @@ interface Props {
   title?: string;
   description?: string;
   nav?: 'writing' | 'tags' | 'about';
+  noindex?: boolean;
 }
 
-const { title, description = SITE.description, nav } = Astro.props;
+const { title, description = SITE.description, nav, noindex = false } = Astro.props;
 const fullTitle = title ? `${title} · ${SITE.title}` : `${SITE.title} · ${SITE.titleZh}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -34,6 +35,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@kirisawa_subaru" />
     <meta name="theme-color" content="#f5f2eb" />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>

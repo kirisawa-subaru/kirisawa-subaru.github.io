@@ -12,6 +12,16 @@ export async function getPosts(): Promise<Post[]> {
   return posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 }
 
+// Drafts get an unlisted, noindex preview page so the real rendering can be
+// checked before publishing. The source is in a public repo anyway.
+export async function getDrafts(): Promise<Post[]> {
+  return getCollection('posts', ({ data }) => data.draft);
+}
+
+export function previewUrl(post: Post) {
+  return `/preview/${post.id}/`;
+}
+
 export function postUrl(post: Post) {
   return `/posts/${post.id}/`;
 }
