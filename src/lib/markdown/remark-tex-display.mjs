@@ -216,18 +216,26 @@ const mathTextDisplay = {
   },
 };
 
+/** The micromark syntax extension on its own (used by the math linter too). */
+export const texDisplaySyntax = {
+  flow: { [BACKSLASH]: mathFlowDisplay },
+  text: { [BACKSLASH]: mathTextDisplay },
+};
+
+/** True when an inlineMath node was written as `\[ … \]`. */
+export const isDisplayText = (source, node) => {
+  const offset = node.position?.start.offset;
+  return offset !== undefined && source.slice(offset, offset + 2) === '\\[';
+};
+
 export default function remarkTexDisplay() {
   const data = this.data();
-  (data.micromarkExtensions ??= []).push({
-    flow: { [BACKSLASH]: mathFlowDisplay },
-    text: { [BACKSLASH]: mathTextDisplay },
-  });
+  (data.micromarkExtensions ??= []).push(texDisplaySyntax);
 
   return (tree, file) => {
     const source = String(file.value ?? '');
     visit(tree, 'inlineMath', (node) => {
-      const offset = node.position?.start.offset;
-      if (offset === undefined || source.slice(offset, offset + 2) !== '\\[') return;
+      if (!isDisplayText(source, node)) return;
       node.data ??= {};
       node.data.hProperties = { className: ['language-math', 'math-display'] };
     });

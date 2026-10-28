@@ -81,8 +81,12 @@ pull before working.
   (`katex/dist/katex.min.css`) must come from the same version rehype-katex
   renders with; a mismatch breaks subscripts, `\boxed` and `\tag` silently.
   Bump `dependencies.katex` and `overrides.katex` together.
-- `npm run check:math` builds with drafts and fails on KaTeX errors or
-  unparsed delimiters; it warns on bare commands like `\le` outside math.
+- `npm run check:math` lints every post source (drafts included) with
+  `src/lib/markdown/math-lint.mjs` — same micromark extensions and KaTeX as
+  the build — and fails on KaTeX errors or unpaired `\(` `\[` `$$`; it warns on
+  bare commands like `\le` outside math. Given a dist dir it also scans built
+  pages. The Obsidian plugin bundles the same linter for its pre-publish check,
+  so keep the module free of Node-only APIs.
   `src/content/posts/math-fixture.md` is the regression fixture: when a new
   math bug is fixed, add the failing pattern there.
 - Wide display equations break out of the text column to the article width
@@ -93,7 +97,7 @@ pull before working.
 ```sh
 npm run check        # astro check, must be 0 errors
 npm run check:math   # every formula renders
-npm run build        # must succeed; CI runs the same three steps
+npm run build        # must succeed; CI runs check, build, then check-math on dist
 ```
 
 Dev server: `npx astro dev --background` (stop with `npx astro dev stop`).

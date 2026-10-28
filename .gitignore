@@ -18,7 +18,6 @@ npm-debug.log*
 
 # Private local-only posts (never pushed; rendered by dev/preview on this machine)
 src/content/posts/local/
-dist-check/
 
 # Obsidian vault config when src/content is opened as a vault
 src/content/.obsidian/
