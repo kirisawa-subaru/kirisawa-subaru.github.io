@@ -1,0 +1,46 @@
+---
+import Base from '../layouts/Base.astro';
+import Intro from '../components/Intro.astro';
+import FeaturedPost from '../components/FeaturedPost.astro';
+import PostList from '../components/PostList.astro';
+import { getPosts, getTags } from '../lib/posts';
+
+const posts = await getPosts();
+const tags = await getTags(posts);
+const [latest, ...rest] = posts;
+---
+
+<Base nav="writing">
+  <Intro postCount={posts.length} tagCount={tags.length} />
+  <div class="shell home">
+    {latest ? <FeaturedPost post={latest} /> : <p class="empty">还没有文章。</p>}
+    {rest.length > 0 && (
+      <section class="archive" aria-labelledby="archive-title">
+        <div class="section-title">
+          <h2 id="archive-title">Writing</h2>
+          <a class="meta" href="/tags/">Browse by tag →</a>
+        </div>
+        <PostList posts={rest} offset={1} />
+      </section>
+    )}
+  </div>
+</Base>
+
+<style>
+  .home {
+    display: grid;
+    gap: 72px;
+  }
+
+  .empty {
+    color: var(--ink-soft);
+  }
+
+  .section-title a {
+    text-decoration: none;
+  }
+
+  .section-title a:hover {
+    color: var(--blue);
+  }
+</style>

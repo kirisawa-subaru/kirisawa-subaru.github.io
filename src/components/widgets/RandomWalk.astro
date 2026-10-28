@@ -1,0 +1,93 @@
+---
+// Interactive demo: a few 1D random walks drawn on a canvas. Re-roll on click.
+interface Props {
+  walkers?: number;
+  steps?: number;
+}
+
+const { walkers = 4, steps = 240 } = Astro.props;
+---
+
+<figure class="walk" data-walkers={walkers} data-steps={steps}>
+  <canvas width="720" height="260"></canvas>
+  <figcaption>
+    <span>{walkers} walkers × {steps} steps</span>
+    <button type="button">Re-roll</button>
+  </figcaption>
+</figure>
+
+<script>
+  const colors = ['#3159d9', '#ff785f', '#7fae47', '#8a6fdc', '#e0a812'];
+
+  function draw(fig: HTMLElement) {
+    const canvas = fig.querySelector('canvas')!;
+    const ctx = canvas.getContext('2d')!;
+    const n = Number(fig.dataset.walkers);
+    const steps = Number(fig.dataset.steps);
+    const { width: w, height: h } = canvas;
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = 'rgba(23,26,29,0.12)';
+    ctx.beginPath();
+    ctx.moveTo(0, h / 2);
+    ctx.lineTo(w, h / 2);
+    ctx.stroke();
+    const scale = h / 2 / (2.6 * Math.sqrt(steps));
+    for (let k = 0; k < n; k++) {
+      let y = 0;
+      ctx.strokeStyle = colors[k % colors.length];
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, h / 2);
+      for (let i = 1; i <= steps; i++) {
+        y += Math.random() < 0.5 ? -1 : 1;
+        ctx.lineTo((i / steps) * w, h / 2 - y * scale);
+      }
+      ctx.stroke();
+    }
+  }
+
+  document.querySelectorAll<HTMLElement>('figure.walk').forEach((fig) => {
+    draw(fig);
+    fig.querySelector('button')!.addEventListener('click', () => draw(fig));
+  });
+</script>
+
+<style>
+  .walk {
+    margin-inline: 0;
+    padding: 18px;
+    background: var(--paper-bright);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  figcaption {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    text-align: left;
+  }
+
+  button {
+    padding: 6px 14px;
+    color: #fff;
+    background: var(--ink);
+    border: 0;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: var(--blue);
+  }
+</style>

@@ -1,0 +1,32 @@
+---
+// <Callout type="note" title="...">body</Callout> — for MDX posts.
+interface Props {
+  type?: 'note' | 'tip' | 'warn';
+  title?: string;
+}
+
+const { type = 'note', title } = Astro.props;
+const accent = { note: 'blue', tip: 'green', warn: 'coral' }[type];
+---
+
+<aside class="callout" data-accent={accent}>
+  {title && <p class="callout-title">{title}</p>}
+  <slot />
+</aside>
+
+<style>
+  .callout {
+    padding: 1em 1.3em;
+    background: var(--tint);
+    border-radius: var(--radius-sm);
+  }
+
+  .callout-title {
+    margin: 0 0 0.3em;
+    font-weight: 800;
+  }
+
+  .callout :global(> :last-child) {
+    margin-bottom: 0;
+  }
+</style>

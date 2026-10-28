@@ -1,0 +1,62 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getPosts, getTags, tagSlug } from '../../lib/posts';
+import { ACCENTS } from '../../site.config';
+
+const tags = await getTags(await getPosts());
+---
+
+<Base title="Tags" nav="tags">
+  <div class="shell page">
+    <p class="kicker">Index</p>
+    <h1 class="display">Tags</h1>
+    <ul class="cloud">
+      {tags.map(([tag, n], i) => (
+        <li data-accent={ACCENTS[i % ACCENTS.length]}>
+          <a href={`/tags/${tagSlug(tag)}/`}>{tag}<span>{n}</span></a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</Base>
+
+<style>
+  .page {
+    padding-top: 56px;
+  }
+
+  h1 {
+    font-size: clamp(44px, 6vw, 72px);
+  }
+
+  .cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 40px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cloud a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    background: var(--tint);
+    border-radius: 999px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 180ms ease;
+  }
+
+  .cloud a:hover {
+    transform: translateY(-2px);
+  }
+
+  .cloud span {
+    color: rgba(23, 26, 29, 0.5);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+  }
+</style>

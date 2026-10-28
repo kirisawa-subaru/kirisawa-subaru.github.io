@@ -1,0 +1,142 @@
+---
+import { SITE } from '../site.config';
+
+interface Props {
+  current?: 'writing' | 'tags' | 'about';
+}
+
+const { current } = Astro.props;
+const items = [
+  { key: 'writing', label: 'Writing', href: '/' },
+  { key: 'tags', label: 'Tags', href: '/tags/' },
+  { key: 'about', label: 'About', href: '/about/' },
+];
+---
+
+<header class="site-header" data-header>
+  <div class="shell nav">
+    <a class="brand" href="/">
+      <span class="brand-mark" aria-hidden="true">{SITE.mark}</span>
+      <span>{SITE.title}</span>
+    </a>
+    <nav class="links" aria-label="Primary">
+      {items.map((i) => (
+        <a href={i.href} aria-current={current === i.key ? 'page' : undefined}>{i.label}</a>
+      ))}
+      <a class="rss" href="/rss.xml" title="RSS feed" aria-label="RSS feed">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path fill="currentColor" d="M5 17a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm-2-7a11 11 0 0 1 11 11h-3a8 8 0 0 0-8-8v-3Zm0-6a17 17 0 0 1 17 17h-3A14 14 0 0 0 3 7V4Z" />
+        </svg>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector('[data-header]');
+  const sync = () => header?.classList.toggle('is-scrolled', window.scrollY > 12);
+  sync();
+  window.addEventListener('scroll', sync, { passive: true });
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid transparent;
+    transition: background 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+  }
+
+  .site-header.is-scrolled {
+    background: rgba(245, 242, 235, 0.86);
+    border-color: var(--line);
+    box-shadow: 0 8px 32px rgba(27, 31, 42, 0.06);
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+  }
+
+  .nav {
+    min-height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+
+  .brand-mark {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: var(--ink);
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+  }
+
+  .links {
+    display: flex;
+    align-items: center;
+    gap: clamp(16px, 3vw, 28px);
+  }
+
+  .links a {
+    position: relative;
+    color: #2f3439;
+    font-size: 14px;
+    font-weight: 650;
+    text-decoration: none;
+  }
+
+  .links a:not(.rss)::after {
+    position: absolute;
+    right: 0;
+    bottom: -7px;
+    left: 0;
+    height: 2px;
+    background: var(--coral);
+    border-radius: 2px;
+    content: '';
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 180ms ease;
+  }
+
+  .links a:hover::after,
+  .links a[aria-current='page']::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  .rss {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    color: var(--ink-soft) !important;
+  }
+
+  .rss:hover {
+    color: var(--coral) !important;
+  }
+
+  @media (max-width: 560px) {
+    .brand span:last-child {
+      display: none;
+    }
+  }
+</style>

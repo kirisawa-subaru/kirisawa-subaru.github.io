@@ -1,0 +1,39 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostList from '../../components/PostList.astro';
+import { getPosts, getTags, tagSlug } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  const tags = await getTags(posts);
+  return tags.map(([tag]) => ({
+    params: { tag: decodeURIComponent(tagSlug(tag)) },
+    props: { tag, posts: posts.filter((p) => p.data.tags.includes(tag)) },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<Base title={`#${tag}`} nav="tags">
+  <div class="shell page">
+    <p class="kicker"><a href="/tags/">Tags</a> / {posts.length} posts</p>
+    <h1 class="display">{tag}</h1>
+    <PostList posts={posts} />
+  </div>
+</Base>
+
+<style>
+  .page {
+    padding-top: 56px;
+  }
+
+  .kicker a {
+    text-decoration: none;
+  }
+
+  h1 {
+    margin-bottom: 40px;
+    font-size: clamp(44px, 6vw, 72px);
+  }
+</style>

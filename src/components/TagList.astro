@@ -1,0 +1,28 @@
+---
+import { tagSlug } from '../lib/posts';
+
+interface Props {
+  tags: string[];
+}
+
+const { tags } = Astro.props;
+---
+
+{tags.length > 0 && (
+  <ul class="tags">
+    {tags.map((t) => (
+      <li><a class="pill" href={`/tags/${tagSlug(t)}/`}>{t}</a></li>
+    ))}
+  </ul>
+)}
+
+<style>
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

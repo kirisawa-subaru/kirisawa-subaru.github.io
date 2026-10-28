@@ -1,0 +1,233 @@
+---
+import type { MarkdownHeading } from 'astro';
+import Base from './Base.astro';
+import TagList from '../components/TagList.astro';
+import { accentOf, formatDate, postUrl, readingMinutes, type Post } from '../lib/posts';
+
+interface Props {
+  post: Post;
+  headings: MarkdownHeading[];
+  prev?: Post;
+  next?: Post;
+}
+
+const { post, headings, prev, next } = Astro.props;
+const { title, description, date, updated, tags, draft, cover } = post.data;
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+<Base title={title} description={description}>
+  <article class="post" data-accent={accentOf(post)}>
+    <header class="post-head shell">
+      <div class="post-meta">
+        <time class="meta" datetime={date.toISOString()}>{formatDate(date)}</time>
+        <span class="meta">· {readingMinutes(post.body)} min read</span>
+        {updated && <span class="meta">· updated {formatDate(updated)}</span>}
+        {draft && <span class="pill pill--draft">Draft</span>}
+      </div>
+      <h1 class="display">{title}</h1>
+      {description && <p class="lede">{description}</p>}
+      <TagList tags={tags} />
+    </header>
+
+    {cover && (
+      <div class="shell cover">
+        <img src={cover.src} width={cover.width} height={cover.height} alt="" />
+      </div>
+    )}
+
+    <div class="shell post-body">
+      <div class="prose">
+        <slot />
+      </div>
+      {toc.length > 1 && (
+        <aside class="toc" aria-label="Contents">
+          <p class="kicker">Contents</p>
+          <ol>
+            {toc.map((h) => (
+              <li class={`d${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>
+            ))}
+          </ol>
+        </aside>
+      )}
+    </div>
+
+    <nav class="shell pager" aria-label="More posts">
+      {next ? (
+        <a class="pager-card" href={postUrl(next)}>
+          <span class="kicker">← Newer</span>
+          <span class="pager-title">{next.data.title}</span>
+        </a>
+      ) : <span />}
+      {prev && (
+        <a class="pager-card pager-card--right" href={postUrl(prev)}>
+          <span class="kicker">Older →</span>
+          <span class="pager-title">{prev.data.title}</span>
+        </a>
+      )}
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .post-head {
+    position: relative;
+    padding: 56px 0 40px;
+    max-width: 900px;
+    margin-inline: auto;
+  }
+
+  .post-head::before {
+    position: absolute;
+    top: 40px;
+    left: -28px;
+    width: 10px;
+    height: 10px;
+    background: var(--dot);
+    border-radius: 50%;
+    content: '';
+  }
+
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  h1 {
+    margin: 18px 0 0;
+    font-size: clamp(38px, 5.6vw, 68px);
+    letter-spacing: -0.05em;
+  }
+
+  .lede {
+    max-width: 680px;
+    margin: 20px 0 24px;
+    color: var(--ink-soft);
+    font-size: 19px;
+    line-height: 1.6;
+  }
+
+  .cover {
+    max-width: 900px;
+    margin: 0 auto 48px;
+  }
+
+  .cover img {
+    width: 100%;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .post-body {
+    max-width: 900px;
+    margin-inline: auto;
+    position: relative;
+  }
+
+  .toc {
+    position: absolute;
+    top: 0;
+    left: calc(100% + 40px);
+    width: 200px;
+    height: 100%;
+  }
+
+  .toc > * {
+    position: sticky;
+    top: 104px;
+  }
+
+  .toc .kicker {
+    margin-bottom: 10px;
+  }
+
+  .toc ol {
+    top: 132px;
+    margin: 0;
+    padding: 0 0 0 14px;
+    border-left: 1px solid var(--line);
+    list-style: none;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .toc li {
+    padding: 4px 0;
+  }
+
+  .toc li.d3 {
+    padding-left: 12px;
+  }
+
+  .toc a {
+    color: var(--ink-soft);
+    text-decoration: none;
+  }
+
+  .toc a:hover {
+    color: var(--blue);
+  }
+
+  @media (max-width: 1360px) {
+    .toc {
+      display: none;
+    }
+  }
+
+  .pager {
+    max-width: 900px;
+    margin: 80px auto 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .pager-card {
+    display: grid;
+    gap: 2px;
+    padding: 20px 24px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: transform 180ms ease, background 180ms ease;
+  }
+
+  .pager-card:hover {
+    background: #fff;
+    transform: translateY(-2px);
+  }
+
+  .pager-card .kicker {
+    margin: 0;
+  }
+
+  .pager-card--right {
+    grid-column: 2;
+    text-align: right;
+  }
+
+  .pager-title {
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.35;
+  }
+
+  @media (max-width: 640px) {
+    .post-head::before {
+      display: none;
+    }
+
+    .pager {
+      grid-template-columns: 1fr;
+    }
+
+    .pager-card--right {
+      grid-column: auto;
+    }
+  }
+</style>

@@ -1,0 +1,46 @@
+---
+import 'katex/dist/katex.min.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../site.config';
+
+interface Props {
+  title?: string;
+  description?: string;
+  nav?: 'writing' | 'tags' | 'about';
+}
+
+const { title, description = SITE.description, nav } = Astro.props;
+const fullTitle = title ? `${title} · ${SITE.title}` : `${SITE.title} · ${SITE.titleZh}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang={SITE.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@kirisawa_subaru" />
+    <meta name="theme-color" content="#f5f2eb" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header current={nav} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

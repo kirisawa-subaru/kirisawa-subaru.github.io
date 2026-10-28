@@ -1,0 +1,65 @@
+---
+title: 排版样张：Markdown、公式、代码与交互组件
+description: 一篇草稿，用来检查各种元素的样式。只在本地 dev 里可见，不会发布。
+date: 2026-10-28
+tags: [meta, demo]
+draft: true
+accent: violet
+---
+
+import Callout from '../../../components/widgets/Callout.astro';
+import RandomWalk from '../../../components/widgets/RandomWalk.astro';
+
+正文段落。中文与 English 混排时的行高和字距，**粗体**、*斜体*、`inline code` 和[链接](https://astro.build)。脚注也可以用[^1]。
+
+## 二级标题
+
+> 引用块。Simplicity is prerequisite for reliability.
+
+- 无序列表第一项
+- 第二项，带一点更长的文字来看看换行之后的缩进效果是否正常
+  - 嵌套项
+
+1. 有序列表
+2. 第二项
+
+### 三级标题：公式
+
+行内公式 $E = mc^2$，以及块公式：
+
+$$
+\mathcal{L}(\theta) = -\mathbb{E}_{(x, y) \sim \mathcal{D}} \left[ \log \pi_\theta(y \mid x) \right] + \beta \, \mathrm{KL}\!\left(\pi_\theta \,\|\, \pi_{\text{ref}}\right)
+$$
+
+### 三级标题：代码
+
+```python
+def random_walk(steps: int) -> list[int]:
+    import random
+    pos, path = 0, [0]
+    for _ in range(steps):
+        pos += random.choice((-1, 1))
+        path.append(pos)
+    return path
+```
+
+## 表格
+
+| 框架 | 语言 | 适合 |
+|---|---|---|
+| Hugo | Go | 纯写作 |
+| Astro | TS | 写作 + 交互 |
+
+## 交互组件
+
+MDX 文章可以 import `src/components/widgets/` 里的组件：
+
+<Callout type="tip" title="Tip">
+这是一个 Callout 组件。
+</Callout>
+
+<RandomWalk walkers={5} steps={300} />
+
+---
+
+[^1]: 这是脚注。

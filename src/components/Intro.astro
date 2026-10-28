@@ -1,0 +1,179 @@
+---
+import { SITE } from '../site.config';
+
+interface Props {
+  postCount: number;
+  tagCount: number;
+}
+
+const { postCount, tagCount } = Astro.props;
+---
+
+<section class="intro" aria-labelledby="intro-title">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="glow glow--one" aria-hidden="true"></div>
+  <div class="glow glow--two" aria-hidden="true"></div>
+  <div class="shell intro-shell">
+    <div>
+      <p class="kicker">{SITE.kicker}</p>
+      <h1 id="intro-title" class="display">
+        Kirisawa <span>Subaru</span>
+      </h1>
+      <p class="tagline">{SITE.tagline}</p>
+    </div>
+    <div class="badge" aria-hidden="true">
+      <div class="orbit orbit--outer"><span></span><span></span><span></span></div>
+      <div class="orbit orbit--inner"></div>
+      <div class="count-card">
+        <span><b>{postCount}</b> posts</span>
+        <span><b>{tagCount}</b> tags</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .intro {
+    position: relative;
+    padding: 64px 0 56px;
+    isolation: isolate;
+  }
+
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -3;
+    opacity: 0.45;
+    background-image:
+      linear-gradient(rgba(23, 26, 29, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(23, 26, 29, 0.045) 1px, transparent 1px);
+    background-size: 54px 54px;
+    -webkit-mask-image: linear-gradient(to bottom, black 10%, transparent 92%);
+    mask-image: linear-gradient(to bottom, black 10%, transparent 92%);
+  }
+
+  .glow {
+    position: absolute;
+    z-index: -2;
+    border-radius: 50%;
+    filter: blur(8px);
+    pointer-events: none;
+  }
+
+  .glow--one {
+    top: -30%;
+    right: 4%;
+    width: 420px;
+    height: 420px;
+    background: rgba(182, 162, 238, 0.22);
+  }
+
+  .glow--two {
+    bottom: -40%;
+    left: -8%;
+    width: 360px;
+    height: 360px;
+    background: rgba(184, 216, 137, 0.24);
+  }
+
+  .intro-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 48px;
+  }
+
+  h1 {
+    font-size: clamp(52px, 7.4vw, 96px);
+    letter-spacing: -0.065em;
+    line-height: 0.9;
+  }
+
+  h1 span {
+    color: var(--blue);
+    font-style: italic;
+  }
+
+  .tagline {
+    max-width: 600px;
+    margin: 24px 0 0;
+    font-size: clamp(18px, 1.9vw, 24px);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.35;
+  }
+
+  .badge {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    display: grid;
+    place-items: center;
+  }
+
+  .orbit {
+    position: absolute;
+    border: 1px solid rgba(49, 89, 217, 0.26);
+    border-radius: 50%;
+  }
+
+  .orbit--outer {
+    inset: 0;
+    animation: spin 40s linear infinite;
+  }
+
+  .orbit--inner {
+    inset: 34px;
+    border-color: rgba(255, 120, 95, 0.36);
+    border-style: dashed;
+  }
+
+  .orbit--outer span {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--blue);
+  }
+
+  .orbit--outer span:nth-child(1) { top: 14px; left: 40px; }
+  .orbit--outer span:nth-child(2) { right: -6px; top: 50%; background: var(--coral); }
+  .orbit--outer span:nth-child(3) { bottom: 22px; left: 30px; background: var(--green); }
+
+  .count-card {
+    display: grid;
+    gap: 2px;
+    padding: 16px 22px;
+    color: rgba(255, 255, 255, 0.72);
+    background: var(--ink);
+    border-radius: 22px;
+    box-shadow: var(--shadow-lg);
+    font-size: 13px;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+  }
+
+  .count-card b {
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 500;
+  }
+
+  .count-card span:last-child b {
+    color: var(--yellow);
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .orbit--outer { animation: none; }
+  }
+
+  @media (max-width: 760px) {
+    .intro-shell { grid-template-columns: 1fr; }
+    .badge { display: none; }
+  }
+</style>

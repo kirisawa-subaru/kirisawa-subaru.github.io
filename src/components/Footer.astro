@@ -1,0 +1,50 @@
+---
+import { SITE } from '../site.config';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="shell foot">
+    <p>© {year} {SITE.title}</p>
+    <p class="foot-links">
+      <a href={SITE.links.github} rel="me noopener">GitHub</a>
+      <a href={SITE.links.x} rel="me noopener">X</a>
+      <a href="/rss.xml">RSS</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 96px;
+    border-top: 1px solid var(--line);
+  }
+
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 28px 0 40px;
+    color: var(--ink-faint);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .foot p {
+    margin: 0;
+  }
+
+  .foot-links {
+    display: flex;
+    gap: 20px;
+  }
+
+  .foot a {
+    text-decoration: none;
+  }
+
+  .foot a:hover {
+    color: var(--ink);
+  }
+</style>
