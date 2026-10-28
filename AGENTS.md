@@ -49,7 +49,11 @@ tight negative tracking for site-level headings (wordmark, section and index
 titles), sans for post titles so CJK and Latin titles match, small uppercase
 blue kickers, pill-shaped labels. Colour carries no per-post meaning: index
 rows share one neutral hover, all tag pills are blue; pastel tints
-(`--tint-*`) are reserved for callouts and widgets. Home page = compact
+(`--tint-*`) are reserved for callouts and widgets. Layout: header/footer
+use the wide `--shell`; all main content (home list, articles, About, tags,
+404) sits in one centred `--column` (720px). The article TOC hangs in the
+right gutter at ≥1261px and collapses into an inline 目录 below that; wide
+equations break out symmetrically only when no side TOC is shown. Home page = compact
 intro, then every post in one list grouped by year (newest row slightly
 larger, "Latest"). CV lives at
 the end of the About page, never on the home page. Tokens and shared atoms

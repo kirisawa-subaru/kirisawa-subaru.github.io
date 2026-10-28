@@ -6,7 +6,7 @@ const latest = (await getPosts()).filter((p) => !p.data.draft).slice(0, 5);
 ---
 
 <Base title="Not found">
-  <div class="shell page">
+  <div class="column page">
     <p class="kicker">404</p>
     <h1 class="display">这一页不存在。</h1>
     {latest.length > 0 && (

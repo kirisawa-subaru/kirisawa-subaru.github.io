@@ -9,7 +9,7 @@ const { title, kicker, description } = page.data;
 ---
 
 <Base title={title} description={description} nav="about">
-  <div class="shell page">
+  <div class="column page">
     {kicker && <p class="kicker">{kicker}</p>}
     <h1 class="display">{title}</h1>
     <div class="prose">
@@ -20,8 +20,6 @@ const { title, kicker, description } = page.data;
 
 <style>
   .page {
-    max-width: 900px;
-    margin-inline: auto;
     padding-top: 56px;
   }
 

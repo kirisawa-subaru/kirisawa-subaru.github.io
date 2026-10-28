@@ -25,7 +25,7 @@ const hasToc = toc.length > 1;
       <span>草稿预览，未发布，不出现在列表、RSS 和搜索引擎里。</span>
     </div>
   )}
-  <article class:list={['post shell', { 'has-toc': hasToc }]}>
+  <article class:list={['post column', { 'has-toc': hasToc }]}>
     <div class="post-main">
       <header class="post-head">
         <div class="post-meta">
@@ -115,8 +115,9 @@ const hasToc = toc.length > 1;
   function fitMath() {
     if (!article || !prose) return;
     const sideVisible = !!sideToc && getComputedStyle(sideToc).display !== 'none';
-    // Break out to the full article width only when no side TOC occupies it.
-    const wide = sideVisible ? prose.clientWidth : article.clientWidth;
+    // Break out past the column (symmetrically) only when no side TOC sits in the gutter.
+    const maxWide = parseFloat(getComputedStyle(article).getPropertyValue('--wide-max')) || 960;
+    const wide = sideVisible ? prose.clientWidth : Math.min(maxWide, document.documentElement.clientWidth - 48);
     prose.style.setProperty('--wide', `${wide}px`);
     for (const el of prose.querySelectorAll<HTMLElement>('.katex-display')) {
       el.classList.remove('is-wide', 'is-scrolling', 'fade-left', 'fade-right');
@@ -151,7 +152,7 @@ const hasToc = toc.length > 1;
 
   fitMath();
   document.fonts?.ready.then(fitMath);
-  if (article) new ResizeObserver(fitMath).observe(article);
+  if (article) new ResizeObserver(fitMath).observe(document.documentElement);
 
   // ---- table of contents: highlight the section under the reading line ----
   const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc]')];
@@ -209,22 +210,9 @@ const hasToc = toc.length > 1;
     font-weight: 650;
   }
 
-  /* Text column on the left edge of the shell (same edge as index pages),
-     side TOC aligned to the header's right edge. */
+  /* One centred reading column; the side TOC hangs in the right gutter. */
   .post {
-    display: grid;
-    grid-template-columns: minmax(0, var(--measure));
-    justify-content: start;
-  }
-
-  .post.has-toc {
-    grid-template-columns: minmax(0, var(--measure)) minmax(180px, 220px);
-    justify-content: space-between;
-    column-gap: 48px;
-  }
-
-  .post-main {
-    min-width: 0;
+    position: relative;
   }
 
   .post-head {
@@ -319,6 +307,11 @@ const hasToc = toc.length > 1;
   }
 
   .toc--side {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(100% + 48px);
+    width: 200px;
     padding-top: 56px;
   }
 
@@ -387,12 +380,8 @@ const hasToc = toc.length > 1;
     display: none;
   }
 
-  @media (max-width: 1100px) {
-    .post.has-toc {
-      grid-template-columns: minmax(0, var(--measure));
-      justify-content: start;
-    }
-
+  /* Gutter needs 48 + 200 px plus page padding on each side. */
+  @media (max-width: 1260px) {
     .toc--side {
       display: none;
     }

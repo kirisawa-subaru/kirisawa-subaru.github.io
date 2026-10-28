@@ -29,6 +29,10 @@
   --radius-lg: 34px;
   --shell: min(1120px, calc(100vw - 48px));
   --measure: 720px;
+  /* Every page's main content sits in one centred column of this width;
+     header and footer use the wider --shell. */
+  --column: min(var(--measure), calc(100vw - 48px));
+  --wide-max: 960px;
 
   --font-sans: 'Aptos', 'Segoe UI', 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB',
     'Noto Sans CJK SC', 'Microsoft YaHei', Arial, sans-serif;
@@ -105,6 +109,11 @@ button:focus-visible {
 
 .shell {
   width: var(--shell);
+  margin: 0 auto;
+}
+
+.column {
+  width: var(--column);
   margin: 0 auto;
 }
 
@@ -512,11 +521,12 @@ a.pill:hover {
 }
 
 /* Layout of wide equations is decided in Post.astro: shrink a little to fit,
-   else break out to the article width (no side TOC), else scroll. Fades show
-   only on the side where content is hidden. */
+   else break out symmetrically past the column (only when no side TOC), else
+   scroll. Fades show only on the side where content is hidden. */
 .prose .katex-display.is-wide {
   width: var(--wide, 100%);
   max-width: none;
+  margin-left: calc((100% - var(--wide, 100%)) / 2);
 }
 
 .prose .katex-display.is-scrolling {

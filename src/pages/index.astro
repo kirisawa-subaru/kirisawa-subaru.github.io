@@ -9,7 +9,7 @@ const posts = await getPosts();
 
 <Base nav="writing">
   <Intro />
-  <div class="shell home">
+  <div class="column home">
     {posts.length ? <PostList posts={posts} highlightFirst /> : <p class="empty">还没有文章。</p>}
     <p class="more"><a href="/tags/">按标签浏览 →</a></p>
   </div>
