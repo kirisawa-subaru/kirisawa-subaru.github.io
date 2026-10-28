@@ -22,3 +22,7 @@ src/content/posts/local/
 # Obsidian vault config when src/content is opened as a vault
 src/content/.obsidian/
 src/content/.trash/
+
+# Obsidian plugin build
+tools/obsidian-blog/node_modules/
+tools/obsidian-blog/dist/

@@ -1,0 +1,9 @@
+{
+  "id": "kirisawa-blog",
+  "name": "Kirisawa Blog",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "Write, check and publish posts of kirisawa-subaru.github.io from this vault.",
+  "author": "kirisawa-subaru",
+  "isDesktopOnly": true
+}

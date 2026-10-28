@@ -5,6 +5,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import remarkMath from 'remark-math-extended';
 import rehypeKatex from 'rehype-katex';
+import rehypeCallouts from 'rehype-callouts';
 import remarkTexDisplay from './src/lib/markdown/remark-tex-display.mjs';
 import rehypeMathNoBreak from './src/lib/markdown/rehype-math-nobreak.mjs';
 
@@ -17,6 +18,20 @@ export default defineConfig({
     processor: unified({
       remarkPlugins: [remarkMath, remarkTexDisplay],
       rehypePlugins: [
+        // Obsidian callouts (> [!note]); styled in global.css, not the package theme.
+        [
+          rehypeCallouts,
+          {
+            theme: 'obsidian',
+            callouts: {
+              theorem: { title: '定理' },
+              lemma: { title: '引理' },
+              definition: { title: '定义' },
+              proof: { title: '证明' },
+              remark: { title: '注' },
+            },
+          },
+        ],
         [
           rehypeKatex,
           {

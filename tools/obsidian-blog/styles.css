@@ -1,0 +1,256 @@
+/* Kirisawa Blog — uses Obsidian theme variables so it follows light/dark. */
+
+.kblog-view {
+  padding: 10px 12px 24px;
+  font-size: var(--font-ui-small);
+}
+
+.kblog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.kblog-title {
+  font-size: var(--font-ui-medium);
+  font-weight: 700;
+}
+
+.kblog-tools {
+  display: flex;
+  gap: 2px;
+}
+
+.kblog-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 6px 10px;
+  border-radius: var(--radius-m);
+  background: var(--background-secondary);
+  color: var(--text-muted);
+}
+
+.kblog-bar .is-failure {
+  color: var(--text-error);
+  font-weight: 600;
+}
+
+.kblog-bar .is-success {
+  color: var(--color-green);
+}
+
+.kblog-link {
+  padding: 0;
+  height: auto;
+  border: 0;
+  background: none !important;
+  box-shadow: none !important;
+  color: var(--text-accent);
+  font-size: inherit;
+  cursor: pointer;
+}
+
+.kblog-card {
+  margin-bottom: 16px;
+  padding: 12px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-l);
+  background: var(--background-primary-alt);
+}
+
+.kblog-card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.kblog-card-note {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+
+.kblog-card-title {
+  margin: 8px 0 2px;
+  font-size: var(--font-ui-medium);
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.kblog-card-url {
+  display: block;
+  overflow: hidden;
+  color: var(--text-faint);
+  font-family: var(--font-monospace);
+  font-size: var(--font-ui-smaller);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kblog-card-hint {
+  margin-top: 8px;
+  color: var(--text-muted);
+}
+
+.kblog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.kblog-actions button {
+  flex: 1 1 auto;
+}
+
+.kblog-pill {
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: var(--font-ui-smaller);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.kblog-pill.is-draft {
+  color: rgb(122, 79, 0);
+  background: rgba(255, 214, 107, 0.4);
+}
+
+.kblog-pill.is-live {
+  color: var(--color-green);
+  background: rgba(var(--color-green-rgb), 0.14);
+}
+
+.kblog-pill.is-local {
+  color: var(--text-muted);
+  background: var(--background-modifier-hover);
+}
+
+.kblog-group {
+  margin-top: 14px;
+}
+
+.kblog-group-label {
+  margin: 0 4px 4px;
+  color: var(--text-faint);
+  font-size: var(--font-ui-smaller);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.kblog-row {
+  padding: 6px 8px;
+  border-radius: var(--radius-m);
+  cursor: pointer;
+}
+
+.kblog-row:hover {
+  background: var(--background-modifier-hover);
+}
+
+.kblog-row.is-active {
+  background: var(--background-modifier-active-hover);
+}
+
+.kblog-row-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kblog-row-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-faint);
+  font-size: var(--font-ui-smaller);
+  font-variant-numeric: tabular-nums;
+}
+
+.kblog-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-orange);
+}
+
+.kblog-status.is-running {
+  color: var(--text-accent);
+}
+
+.kblog-status.is-failure {
+  color: var(--text-error);
+  cursor: pointer;
+}
+
+.kblog-status.is-success {
+  color: var(--color-green);
+}
+
+.kblog-modal .kblog-issues {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.kblog-issue {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: start;
+  padding: 8px 10px;
+  border-radius: var(--radius-m);
+}
+
+.kblog-issue.is-clickable {
+  cursor: pointer;
+}
+
+.kblog-issue.is-clickable:hover {
+  background: var(--background-modifier-hover);
+}
+
+.kblog-issue-tag {
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: var(--font-ui-smaller);
+  font-weight: 700;
+}
+
+.kblog-issue.is-error .kblog-issue-tag {
+  color: var(--text-on-accent);
+  background: var(--color-red);
+}
+
+.kblog-issue.is-warning .kblog-issue-tag {
+  color: rgb(122, 79, 0);
+  background: rgba(255, 214, 107, 0.5);
+}
+
+.kblog-issue-body code {
+  display: block;
+  margin-top: 4px;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kblog-issue-line {
+  color: var(--text-faint);
+  font-family: var(--font-monospace);
+  font-size: var(--font-ui-smaller);
+}
+
+.kblog-notice-pre {
+  max-height: 8em;
+  margin: 6px 0 0;
+  overflow: auto;
+  font-size: 11px;
+  white-space: pre-wrap;
+}
