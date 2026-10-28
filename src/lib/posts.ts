@@ -3,9 +3,12 @@ import { ACCENTS, type Accent } from '../site.config';
 
 export type Post = CollectionEntry<'posts'>;
 
-// Drafts render in `astro dev` and are dropped from production builds.
+// Drafts render in `astro dev` (and with SHOW_DRAFTS=1, used by the CI math
+// check) and are dropped from production builds.
+const showDrafts = import.meta.env.DEV || process.env.SHOW_DRAFTS === '1';
+
 export async function getPosts(): Promise<Post[]> {
-  const posts = await getCollection('posts', ({ data }) => import.meta.env.DEV || !data.draft);
+  const posts = await getCollection('posts', ({ data }) => showDrafts || !data.draft);
   return posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 }
 

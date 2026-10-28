@@ -30,6 +30,8 @@ cover: ./cover.png       # optional; relative image path
 ```
 
 The repo is public, so drafts are readable on GitHub even though they are not built.
+Private local-only posts go in `src/content/posts/local/` (gitignored): they render
+in dev/preview on this machine and never reach GitHub.
 
 MDX posts may import interactive widgets from `src/components/widgets/`
 (see `src/content/posts/style-guide/index.mdx` for every element in use).
@@ -57,11 +59,30 @@ are in `src/styles/global.css`; site identity strings in `src/site.config.ts`.
   deprecated top-level `markdown.remarkPlugins`.
 - Zod comes from `astro/zod`; loaders from `astro/loaders`.
 
+## Math (high priority — posts are formula-heavy)
+
+- Delimiters: `$…$`, `$$…$$`, `\(…\)`, `\[…\]` all work. Parsing is
+  `remark-math-extended` plus `src/lib/markdown/remark-tex-display.mjs`, which
+  lets `\[` open on lazy continuation lines (e.g. after a `8. …` line) and
+  renders mid-line `\[…\]` as display math. `rehype-math-nobreak.mjs` keeps
+  inline math glued to the punctuation after it.
+- KaTeX is pinned to one version via `overrides` in package.json. The CSS
+  (`katex/dist/katex.min.css`) must come from the same version rehype-katex
+  renders with; a mismatch breaks subscripts, `\boxed` and `\tag` silently.
+  Bump `dependencies.katex` and `overrides.katex` together.
+- `npm run check:math` builds with drafts and fails on KaTeX errors or
+  unparsed delimiters; it warns on bare commands like `\le` outside math.
+  `src/content/posts/math-fixture.md` is the regression fixture: when a new
+  math bug is fixed, add the failing pattern there.
+- Wide display equations break out of the text column to the article width
+  (script in `src/layouts/Post.astro`), then scroll with a fade.
+
 ## Before pushing
 
 ```sh
-npm run check   # astro check, must be 0 errors
-npm run build   # must succeed; CI runs the same two steps
+npm run check        # astro check, must be 0 errors
+npm run check:math   # every formula renders
+npm run build        # must succeed; CI runs the same three steps
 ```
 
 Dev server: `npx astro dev --background` (stop with `npx astro dev stop`).

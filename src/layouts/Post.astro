@@ -69,6 +69,39 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
   </article>
 </Base>
 
+<script>
+  // Display equations wider than the text column break out to the full article
+  // width; ones still too wide scroll horizontally with a fade on the right.
+  const body = document.querySelector<HTMLElement>('.post-body');
+  const prose = body?.querySelector<HTMLElement>('.prose');
+
+  function fitMath() {
+    if (!body || !prose) return;
+    const wide = body.clientWidth;
+    prose.style.setProperty('--wide', `${wide}px`);
+    for (const el of prose.querySelectorAll<HTMLElement>('.katex-display')) {
+      el.classList.remove('is-wide', 'is-scrolling', 'at-end');
+      const need = el.scrollWidth;
+      if (need > el.clientWidth + 1 && wide > prose.clientWidth) el.classList.add('is-wide');
+      if (el.scrollWidth > el.clientWidth + 1) el.classList.add('is-scrolling');
+    }
+  }
+
+  prose?.addEventListener(
+    'scroll',
+    (e) => {
+      const el = e.target as HTMLElement;
+      if (!el.classList?.contains('is-scrolling')) return;
+      el.classList.toggle('at-end', el.scrollLeft + el.clientWidth >= el.scrollWidth - 2);
+    },
+    { capture: true, passive: true },
+  );
+
+  fitMath();
+  document.fonts?.ready.then(fitMath);
+  if (body) new ResizeObserver(fitMath).observe(body);
+</script>
+
 <style>
   .post-head {
     position: relative;

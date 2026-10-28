@@ -256,19 +256,21 @@ a.pill:hover {
   margin-bottom: 0;
 }
 
+/* Sans for in-article headings: mixed CJK/Latin headings stay in one family
+   on systems without a CJK serif. */
 .prose h2,
 .prose h3,
 .prose h4 {
   margin: 2.2em 0 0.4em;
-  font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.25;
+  font-family: var(--font-sans);
+  font-weight: 750;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
 }
 
-.prose h2 { font-size: 1.65em; }
-.prose h3 { font-size: 1.3em; }
-.prose h4 { font-size: 1.08em; }
+.prose h2 { font-size: 1.5em; }
+.prose h3 { font-size: 1.22em; }
+.prose h4 { font-size: 1.05em; }
 
 .prose h2 + *,
 .prose h3 + *,
@@ -342,6 +344,12 @@ a.pill:hover {
   line-height: 1.65;
 }
 
+/* Untagged fences are usually prose (prompts, transcripts): wrap them. */
+.prose pre[data-language='plaintext'] {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .prose img {
   margin-inline: auto;
   border-radius: var(--radius-sm);
@@ -371,10 +379,60 @@ a.pill:hover {
   font-weight: 750;
 }
 
+/* ---------- math (KaTeX) ---------- */
+
+.prose .katex {
+  font-size: 1.1em;
+}
+
 .prose .katex-display {
+  margin: 1.4em 0;
+  padding: 0.35em 0;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 0.3em 0;
+  scrollbar-width: thin;
+}
+
+.prose .katex-display > .katex {
+  font-size: 1.12em;
+}
+
+/* Wider than the text column: break out to the full article width (set by
+   Post.astro). Still scrolls if even that is not enough, with a fade edge. */
+.prose .katex-display.is-wide {
+  width: var(--wide, 100%);
+  max-width: none;
+}
+
+.prose .katex-display.is-scrolling {
+  -webkit-mask-image: linear-gradient(to right, black calc(100% - 40px), transparent);
+  mask-image: linear-gradient(to right, black calc(100% - 40px), transparent);
+}
+
+.prose .katex-display.is-scrolling.at-end {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.prose .math-nobreak {
+  white-space: nowrap;
+}
+
+.prose .katex .fbox {
+  border-color: rgba(49, 89, 217, 0.45);
+  border-radius: 0.3em;
+  background: rgba(49, 89, 217, 0.045);
+}
+
+.prose .katex .tag {
+  color: var(--ink-faint);
+}
+
+.prose .katex-error {
+  color: #b42318;
+  background: rgba(255, 120, 95, 0.14);
+  border-radius: 4px;
+  padding: 0 0.2em;
 }
 
 .prose .footnotes {

@@ -15,3 +15,7 @@ npm-debug.log*
 # macOS / editors
 .DS_Store
 .idea/
+
+# Private local-only posts (never pushed; rendered by dev/preview on this machine)
+src/content/posts/local/
+dist-check/

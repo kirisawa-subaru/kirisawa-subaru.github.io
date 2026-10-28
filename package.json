@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "check": "astro check"
+    "check": "astro check",
+    "check:math": "SHOW_DRAFTS=1 astro build --outDir dist-check && node scripts/check-math.mjs dist-check"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.5",
@@ -18,12 +19,19 @@
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
     "astro": "^7.4.2",
-    "katex": "^0.19.1",
+    "katex": "0.16.47",
+    "micromark-factory-space": "^2.1.0",
+    "micromark-util-character": "^2.1.1",
     "rehype-katex": "^7.0.1",
-    "remark-math": "^6.0.0"
+    "remark-math-extended": "^6.1.1",
+    "unist-util-visit": "^5.2.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
+    "hast-util-from-html": "^2.0.3",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "katex": "0.16.47"
   }
 }
